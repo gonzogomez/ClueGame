@@ -1,12 +1,15 @@
 package clueGame;
 
+import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
@@ -15,7 +18,6 @@ import clueGame.RoomCell.DoorDirection;
 
 public class Board {
 	
-	//* Part II - Code ***************************************************************
 	//Variables
 	private ArrayList<BoardCell> cells;
 	private Map<Character,String> rooms;
@@ -32,6 +34,7 @@ public class Board {
 	private ArrayList<ComputerPlayer> computerPlayers;
 	private HumanPlayer humanPlayer;
 	private Solution solution;
+	private Player whoseTurn;
 	private int numPeople;
 	private int numRooms;
 	private int numWeapons;
@@ -42,6 +45,9 @@ public class Board {
 		targets = new HashSet<BoardCell>();
 		rooms = new HashMap<Character, String>();
 		cells = new ArrayList<BoardCell>();
+		humanPlayer = new HumanPlayer();
+		computerPlayers = new ArrayList<ComputerPlayer>();
+		cards = new ArrayList<Card>();
 		loadConfigFiles();
 		boardSize = numRows*numColumns;
 		calcAdjacencies();
@@ -49,11 +55,15 @@ public class Board {
 
 	//Takes path of the legend and CSV file and calls their helper functions.
 	public void loadConfigFiles() {
-		String legend = "OtherFiles/Clue Game - Legend";  			// for linux: "OtherFiles/Clue Game - Legend"
-		String csvFile = "OtherFiles/ClueGameBoard (Updated).csv"; // for linux: "OtherFiles/ClueGameBoard (Updated).csv"
+		String legend = "Clue Game - Legend";
+		String csvFile = "ClueGameBoard (Updated).csv";
+		String players = "player_config.txt";
+		String cards = "cards_config.txt";
 		try{
 			loadLegend(legend);
 			loadCSV(csvFile);
+			loadPlayers(players);
+			loadCards(cards);
 		}
 		catch(FileNotFoundException e) {
 			System.out.println("Can't find the file, check the path.");
@@ -118,7 +128,69 @@ public class Board {
 	numRows = rows;
 	in.close();	
 	}
-	
+	//Load Players
+	public void loadPlayers(String fileName) throws BadConfigFormatException, FileNotFoundException{
+		FileReader reader = null;
+		reader = new FileReader(fileName);
+		Scanner in = new Scanner(reader);
+		//Load human player
+		String firstString = in.nextLine();
+		String[] firstTokens = firstString.split(",");
+		humanPlayer.setName(firstTokens[0]);
+		String number = firstTokens[1];
+		String number2 = firstTokens[2];
+		int location = Integer.parseInt(number);
+		int location2 = Integer.parseInt(number2);
+		humanPlayer.setLocationX(location);
+		humanPlayer.setLocationY(location2);
+		String strColor = firstTokens[3];
+		Color color = convertColor(strColor);
+		humanPlayer.setColor(color);
+		//Load computer players
+		while(in.hasNextLine()) {
+			String inString = in.nextLine();
+			String[] tokens = inString.split(",");
+			ComputerPlayer compPlayer = new ComputerPlayer();
+			compPlayer.setName(tokens[0]);
+			number = tokens[1];
+			number2 = tokens[2];
+			location = Integer.parseInt(number);
+			location2 = Integer.parseInt(number2);
+			compPlayer.setLocationX(location);
+			compPlayer.setLocationY(location2);
+			strColor = tokens[3];
+			color = convertColor(strColor);
+			compPlayer.setColor(color);
+			computerPlayers.add(compPlayer);
+		}
+	in.close();	
+	}
+	//Load Cards
+	public void loadCards(String fileName) throws BadConfigFormatException, FileNotFoundException{
+		FileReader reader = null;
+		reader = new FileReader(fileName);
+		Scanner in = new Scanner(reader);
+		while(in.hasNextLine()) {
+			String inString = in.nextLine();
+			String[] tokens = inString.split(",");
+			Card card = new Card();
+			card.setName(tokens[0]);
+			if(tokens[1].equals("PERSON")){
+				card.setCardType(Card.CardType.PERSON);
+				++numPeople;
+			}
+			else if(tokens[1].equals("ROOM")){
+				card.setCardType(Card.CardType.ROOM);
+				++numRooms;
+			}
+			else{
+				card.setCardType(Card.CardType.WEAPON);
+				++numWeapons;
+			}
+			cards.add(card);
+		}
+	in.close();	
+	}
 	//Calculates the board index, given a row and column number.
 	public int calcIndex(int row, int column) {
 		return ((row * numColumns) + (column));
@@ -252,30 +324,73 @@ public class Board {
 	}
 	
 //*Clue players methods***********************************************************
+	// Be sure to trim the color, we don't want spaces around the name
+	public Color convertColor(String strColor) {
+		Color color; 
+		try {     
+			// We can use reflection to convert the string to a color
+			Field field = Class.forName("java.awt.Color").getField(strColor.trim());     
+			color = (Color)field.get(null); } 
+		catch (Exception e) {  
+			color = null; // Not defined } 
+		}
+		return color;
+	}
 	public void selectAnswer(){
 
 	}
-
-	public void deal(ArrayList<String> cardList){
-
-	}
-
-	public void deal(){
-
+	
+	public void deal(ArrayList<String> cardlist){
+		if(cardlist.size() < cards.size()){
+			Random rand = new Random();
+			int number = rand.nextInt(cards.size());
+			if(!cardlist.contains(cards.get(number).getName())){
+				if(humanPlayer.getMyCards().size() < 3){
+					if(cards.get(number).getCardType() == Card.CardType.PERSON && !humanPlayer.getMyCards().contains(Card.CardType.PERSON)){
+						humanPlayer.getMyCards().add(cards.get(number));
+						cardlist.add(cards.get(number).getName());
+					}
+					if(cards.get(number).getCardType() == Card.CardType.ROOM && !humanPlayer.getMyCards().contains(Card.CardType.ROOM)){
+						humanPlayer.getMyCards().add(cards.get(number));
+						cardlist.add(cards.get(number).getName());
+					}
+					if(cards.get(number).getCardType() == Card.CardType.WEAPON && !humanPlayer.getMyCards().contains(Card.CardType.WEAPON)){
+						humanPlayer.getMyCards().add(cards.get(number));
+						cardlist.add(cards.get(number).getName());
+					}
+				}
+				for(ComputerPlayer p: computerPlayers){
+					if(!cardlist.contains(cards.get(number).getName()) && p.getMyCards().size() < 4){
+						p.getMyCards().add(cards.get(number));
+						cardlist.add(cards.get(number).getName());
+					}
+					number = rand.nextInt(cards.size());
+				}
+			}
+			deal(cardlist);
+		}
 	}
 
 	public boolean checkAccusation(String person, String room, String weapon){
 		return false;
 	}
 
-	public void handleSuggestion(String person, String weapon, String room){
-
+	public Card handleSuggestion(String person, String weapon, String room){
+		return null;
 	}
 //*Getters and Setters***********************************************************
 	
 	
 	public ArrayList<BoardCell> getCells() {
 		return cells;
+	}
+
+	public Player getWhoseTurn() {
+		return whoseTurn;
+	}
+
+	public void setWhoseTurn(Player whoseTurn) {
+		this.whoseTurn = whoseTurn;
 	}
 
 	public Solution getSolution() {

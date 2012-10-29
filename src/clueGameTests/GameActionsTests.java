@@ -1,6 +1,9 @@
 package clueGameTests;
 
 import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+
 import junit.framework.Assert;
 
 import org.junit.BeforeClass;
@@ -10,8 +13,10 @@ import clueGame.Board;
 import clueGame.BoardCell;
 import clueGame.Card;
 import clueGame.ComputerPlayer;
+import clueGame.HumanPlayer;
 import clueGame.Player;
 import clueGame.Solution;
+import clueGame.Suggestion;
 
 public class GameActionsTests {
 	
@@ -278,9 +283,54 @@ public class GameActionsTests {
 	}
 	
 	//Test disproving a suggestion
+	//Test disproving suggestion with one player and one card in possible match
 	@Test
-	public void testDisprovingSuggestion(){
+	public void testDisprovingSuggestionOnePlayerOneCard(){
 		//create a player
+		Player player = new Player();
+		Card returnCard = new Card();
+		//Deal the six cards to the player
+		player.getMyCards().add(mustardCard);
+		player.getMyCards().add(mrGreenCard);
+		player.getMyCards().add(leadPipeCard);
+		player.getMyCards().add(knifeCard);
+		player.getMyCards().add(hallCard);
+		player.getMyCards().add(kitchenCard);
+
+		//Test for one player, one correct match
+		//Test that it returns correct person
+		returnCard = player.disproveSuggestion("Colonel Mustard", "Study", "Revolver");
+		assertEquals("Colonel Mustard", returnCard.getName());
+		
+		//Test that it returns correct room
+		returnCard = player.disproveSuggestion("Mrs. White", "Hall", "Revolver");
+		assertEquals("Hall", returnCard.getName());
+		
+		//Test that it returns correct weapon
+		returnCard = player.disproveSuggestion("Mrs. White", "Study", "Knife");
+		assertEquals("Knife", returnCard.getName());
+		
+		//Test that it returns correct person
+		returnCard = player.disproveSuggestion("Mr. Green", "Study", "Revolver");
+		assertEquals("Mr. Green", returnCard.getName());
+		
+		//Test that it returns correct room
+		returnCard = player.disproveSuggestion("Mrs. White", "Kitchen", "Revolver");
+		assertEquals("Kitchen", returnCard.getName());
+		
+		//Test that it returns correct weapon
+		returnCard = player.disproveSuggestion("Mrs. White", "Study", "Lead Pipe");
+		assertEquals("Lead Pipe", returnCard.getName());
+		
+		//Test that it returns null
+		returnCard = player.disproveSuggestion("Mrs. White", "Study", "Revolver");
+		assertEquals(null, returnCard.getName());
+	}
+	
+	//Test disproving suggestion with one player and multiple cards in possible match
+	@Test
+	public void testDisprovingSuggestionOnePlayerMultCard(){
+		Card returnCard = new Card();
 		Player player = new Player();
 		//Deal the six cards to the player
 		player.getMyCards().add(mustardCard);
@@ -290,11 +340,238 @@ public class GameActionsTests {
 		player.getMyCards().add(hallCard);
 		player.getMyCards().add(kitchenCard);
 		
+		//Test for one player, multiple possible matches
+		//Test with three possible matches
+		//Test one
+		int mustardCard = 0;
+		int hallCard = 0;
+		int leadPipeCard = 0;
+		// Run the test 100 times
+		for (int i=0; i<100; i++) {
+			returnCard = player.disproveSuggestion("Colonel Mustard", "Hall", "Lead Pipe");
+			if (returnCard.getName().equals("Colonel Mustard")){
+				mustardCard++;
+			}
+			else if (returnCard.getName().equals("Hall")){
+				hallCard++;
+			}
+			else if (returnCard.getName().equals("Lead Pipe")){
+				leadPipeCard++;
+			}
+			else
+				fail("Card not part of suggestion");
+		}
+		// Ensure we have 100 total selections (fail should also ensure)
+		assertEquals(100, mustardCard + hallCard + leadPipeCard);
+		// Ensure each possibility was returned more than once
+		assertTrue(mustardCard > 10);
+		assertTrue(hallCard > 10);
+		assertTrue(leadPipeCard > 10);
+
+		//Test 2
+		int mrGreenCard = 0;
+		int kitchenCard = 0;
+		int knifeCard = 0;
+		// Run the test 100 times
+		for (int i=0; i<100; i++) {
+			returnCard = player.disproveSuggestion("Mr. Green", "Kitchen", "Knife");
+			if (returnCard.getName().equals("Mr. Green")){
+				mrGreenCard++;
+			}
+			else if (returnCard.getName().equals("Kitchen")){
+				kitchenCard++;
+			}
+			else if (returnCard.getName().equals("Knife")){
+				knifeCard++;
+			}
+			else
+				fail("Card not part of suggestion");
+		}
+		// Ensure we have 100 total selections (fail should also ensure)
+		assertEquals(100, mrGreenCard + kitchenCard + knifeCard);
+		// Ensure each possibility was returned more than once
+		assertTrue(mrGreenCard > 10);
+		assertTrue(kitchenCard > 10);
+		assertTrue(knifeCard > 10);
+		
+		//Test with two possible choices
+		//Test with person and room as possible choices
+		mrGreenCard = 0;
+		kitchenCard = 0;
+		// Run the test 100 times
+		for (int i=0; i<100; i++) {
+			returnCard = player.disproveSuggestion("Mr. Green", "Kitchen", "Revolver");
+			if (returnCard.getName().equals("Mr. Green")){
+				mrGreenCard++;
+			}
+			else if (returnCard.getName().equals("Kitchen")){
+				kitchenCard++;
+			}
+			else
+				fail("Card not part of suggestion");
+		}
+		// Ensure we have 100 total selections (fail should also ensure)
+		assertEquals(100, mrGreenCard + kitchenCard);
+		// Ensure each possibility was selected more than once
+		assertTrue(mrGreenCard > 10);
+		assertTrue(kitchenCard > 10);
+		
+		//Test room and weapon as possible matches
+		hallCard = 0;
+		leadPipeCard = 0;
+		// Run the test 100 times
+		for (int i=0; i<100; i++) {
+			returnCard = player.disproveSuggestion("Mrs. White", "Hall", "Lead Pipe");
+			if (returnCard.getName().equals("Hall")){
+				hallCard++;
+			}
+			else if (returnCard.getName().equals("Lead Pipe")){
+				leadPipeCard++;
+			}
+			else
+				fail("Card not part of suggestion");
+		}
+		// Ensure we have 100 total selections (fail should also ensure)
+		assertEquals(100, hallCard + leadPipeCard);
+		// Ensure each possibility was returned more than once
+		assertTrue(hallCard > 10);
+		assertTrue(leadPipeCard > 10);
+}
+	
+	@Test
+	public void testDisprovingSuggestionMultiPlayer(){
+		Card returnCard = new Card();
+		//Create array of players and human player
+		ArrayList<ComputerPlayer> computers = new ArrayList<ComputerPlayer>();
+		HumanPlayer hplayer = new HumanPlayer();
+		//Deal card to human player
+		hplayer.getMyCards().add(kitchenCard);
+		//Deal cards to the computer players
+		ComputerPlayer player1 = new ComputerPlayer();
+		player1.getMyCards().add(mustardCard);
+		computers.add(player1);
+		ComputerPlayer player2 = new ComputerPlayer();
+		player2.getMyCards().add(leadPipeCard);
+		computers.add(player2);
+		ComputerPlayer player3 = new ComputerPlayer();
+		player1.getMyCards().add(mrGreenCard);
+		computers.add(player3);
+		ComputerPlayer player4 = new ComputerPlayer();
+		player1.getMyCards().add(knifeCard);
+		computers.add(player4);
+		ComputerPlayer player5 = new ComputerPlayer();
+		player1.getMyCards().add(hallCard);
+		computers.add(player5);
+		
+		board.setComputerPlayers(computers);
+		board.setHumanPlayer(hplayer);
+		
+		//Make suggestion that no players can disprove
+		returnCard = board.handleSuggestion("Mrs. White", "Rope", "Study");
+		//Assert that it returns null
+		assertEquals(null, returnCard.getName());
+		
+		//Tests when a suggestion is made that only the human can disprove
+		returnCard = board.handleSuggestion("Mrs. White", "Rope", "Kitchen");
+		//Assert that it return correct card
+		assertEquals("Kitchen", returnCard.getName());
+		
+		//Test that the computer player whose turn it is, will not return a card
+		//Set turn to player1
+		board.setWhoseTurn(player1);
+		//Make suggestion that only player1 can disprove
+		returnCard = board.handleSuggestion("Colonel Mustard", "Rope", "Study");
+		//Assert that it returns null
+		assertEquals(null, returnCard.getName());
+		
+		//Test if it is the human player's turn, it will not return a card
+		//Set turn to human player
+		board.setWhoseTurn(hplayer);
+		//Make suggestion that only hplayer can disprove
+		returnCard = board.handleSuggestion("Mrs. White", "Rope", "Kitchen");
+		//Assert that it returns null
+		assertEquals(null, returnCard.getName());
+		
+		//Test players are not queried in the same order each time
+		//Suggestion that two computers players can disprove
+		int mrGreenCard = 0;
+		int leadPipeCard = 0;
+		// Run the test 100 times
+		for (int i=0; i<100; i++) {
+			returnCard = board.handleSuggestion("Mr. Green", "Lead Pipe", "Study");
+			if (returnCard.getName().equals("Mr. Green")){
+				mrGreenCard++;
+			}
+			else if (returnCard.getName().equals("Lead Pipe")){
+				leadPipeCard++;
+			}
+			else
+				fail("Card not part of suggestion");
+		}
+		// Ensure we have 100 total selections (fail should also ensure)
+		assertEquals(100, mrGreenCard + leadPipeCard);
+		// Ensure each possibility was selected more than once
+		assertTrue(mrGreenCard > 10);
+		assertTrue(leadPipeCard > 10);
+
+		//Test players are not queried in the same order each time
+		//Suggestion that human player and one computer player can disprove
+		int kitchenCard = 0;
+		leadPipeCard = 0;
+		// Run the test 100 times
+		for (int i=0; i<100; i++) {
+			returnCard = board.handleSuggestion("Mrs. White", "Lead Pipe", "Kitchen");
+			if (returnCard.getName().equals("Kitchen")){
+				kitchenCard++;
+			}
+			else if (returnCard.getName().equals("Lead Pipe")){
+				leadPipeCard++;
+			}
+			else
+				fail("Card not part of suggestion");
+		}
+		// Ensure we have 100 total selections (fail should also ensure)
+		assertEquals(100, kitchenCard + leadPipeCard);
+		// Ensure each possibility was selected more than once
+		assertTrue(kitchenCard > 10);
+		assertTrue(leadPipeCard > 10);
 	}
 	
 	@Test
 	public void testMakingSuggestion(){
+		ComputerPlayer player = new ComputerPlayer();
+		Suggestion testSuggestion = new Suggestion();
 		
+		//Update seen cards
+		player.getSeenCards().add(mrGreenCard);
+		player.getSeenCards().add(leadPipeCard);
+		//Update location
+		player.setLocationX(17);
+		player.setLocationY(5);
+		//Make suggestion
+		testSuggestion = player.createSuggestion();
+		//Test suggested room is correct
+		assertEquals("Kitchen", testSuggestion.getRoom());
+		//Test suggested person is not included in seen cards
+		Assert.assertFalse(testSuggestion.getName().equals("Mr. Green"));
+		//Test suggested weapon is not included in seen cards
+		Assert.assertFalse(testSuggestion.getName().equals("Lead Pipe"));
+		
+		//Update seen cards
+		player.getSeenCards().add(mustardCard);
+		player.getSeenCards().add(knifeCard);
+		//Update location
+		player.setLocationX(5);
+		player.setLocationY(15);
+		//Make suggestion
+		testSuggestion = player.createSuggestion();
+		//Test suggested room is correct
+		assertEquals("Library", testSuggestion.getRoom());
+		//Test suggested person is not included in seen cards
+		Assert.assertFalse(testSuggestion.getName().equals("Colonel Mustard"));
+		//Test suggested weapon is not included in seen cards
+		Assert.assertFalse(testSuggestion.getName().equals("Knife"));
+
 	}
 
 }

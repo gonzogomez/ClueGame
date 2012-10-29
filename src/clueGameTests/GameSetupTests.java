@@ -2,7 +2,9 @@ package clueGameTests;
 
 import static org.junit.Assert.*;
 
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -30,7 +32,7 @@ public class GameSetupTests {
 		//Tests name
 		assertEquals("Miss Scarlet", testHuman.getName());
 		//Tests color
-		assertEquals("Red", testHuman.getColor());
+		assertEquals(Color.red, testHuman.getColor());
 		//Tests starting location
 		assertEquals(13, testHuman.getLocationX());
 		assertEquals(22, testHuman.getLocationY());
@@ -43,19 +45,19 @@ public class GameSetupTests {
 		//Tests name
 		assertEquals("Mr. Green", players.get(0).getName());
 		//Tests color
-		assertEquals("Green", players.get(0).getColor());
+		assertEquals(Color.green, players.get(0).getColor());
 		//Tests Starting location
-		assertEquals(21, testHuman.getLocationX());
-		assertEquals(6, testHuman.getLocationY());
+		assertEquals(21, players.get(0).getLocationX());
+		assertEquals(6, players.get(0).getLocationY());
 
 		//Tests last computer player in file
 		//Tests name
 		assertEquals("Professor Plum", players.get(players.size()-1).getName());
 		//Tests color
-		assertEquals("Purple", players.get(players.size()-1).getColor());
+		assertEquals(Color.magenta, players.get(players.size()-1).getColor());
 		//Tests Starting location
-		assertEquals(0, testHuman.getLocationX());
-		assertEquals(19, testHuman.getLocationY());
+		assertEquals(0,  players.get(players.size()-1).getLocationX());
+		assertEquals(19,  players.get(players.size()-1).getLocationY());
 	}
 	
 	//Tests cards were loaded correctly from file
@@ -90,32 +92,28 @@ public class GameSetupTests {
 	//Tests that cards are dealt correctly
 	@Test
 	public void testDealing(){
-		ArrayList<Card> deck = new ArrayList<Card>();
-		board.deal();
-		deck = board.getCards();
-		Player human = new Player();
-		Player computer1 = new Player();
-		Player computer2 = new Player();
-		Player computer3 = new Player();
-		Player computer4 = new Player();
-		Player computer5 = new Player();
-		human = board.getHumanPlayer();
-		computer1 = board.getComputerPlayers().get(0);
-		computer2 = board.getComputerPlayers().get(1);
-		computer3 = board.getComputerPlayers().get(2);
-		computer4 = board.getComputerPlayers().get(3);
-		computer5 = board.getComputerPlayers().get(4);
+		HashSet<Card> deck = new HashSet<Card>();
+		ArrayList<String> cardlist = new ArrayList<String>();
+		board.deal(cardlist);
 		
 		//Test that all the cards were dealt
-		assertEquals(0, deck.size());
+		for(Card c: board.getHumanPlayer().getMyCards()){
+			deck.add(c);
+		}
+		for(ComputerPlayer p: board.getComputerPlayers()){
+			for(Card c: p.getMyCards()){
+				deck.add(c);
+			}
+		}
+		assertEquals(21, deck.size());
 		
 		//Test all players have roughly the same number of cards
-		int baseNumber = human.getMyCards().size();
-		Assert.assertTrue(Math.abs(computer1.getMyCards().size() - baseNumber) <= 1);
-		Assert.assertTrue(Math.abs(computer2.getMyCards().size() - baseNumber) <= 1);
-		Assert.assertTrue(Math.abs(computer3.getMyCards().size() - baseNumber) <= 1);
-		Assert.assertTrue(Math.abs(computer4.getMyCards().size() - baseNumber) <= 1);
-		Assert.assertTrue(Math.abs(computer5.getMyCards().size() - baseNumber) <= 1);
+		int baseNumber = board.getHumanPlayer().getMyCards().size();
+		Assert.assertTrue(Math.abs(board.getComputerPlayers().get(0).getMyCards().size() - baseNumber) <= 1);
+		Assert.assertTrue(Math.abs(board.getComputerPlayers().get(1).getMyCards().size() - baseNumber) <= 1);
+		Assert.assertTrue(Math.abs(board.getComputerPlayers().get(2).getMyCards().size() - baseNumber) <= 1);
+		Assert.assertTrue(Math.abs(board.getComputerPlayers().get(3).getMyCards().size() - baseNumber) <= 1);
+		Assert.assertTrue(Math.abs(board.getComputerPlayers().get(4).getMyCards().size() - baseNumber) <= 1);
 		
 		//Test that one card is not given to two different players
 		int numApperanceOfCard = 0;
@@ -129,7 +127,7 @@ public class GameSetupTests {
 			}
 		}
 		//Iterates through the humans cards
-		for(Card c: human.getMyCards()){
+		for(Card c: board.getHumanPlayer().getMyCards()){
 			if(c.getName().equals(name)){
 				++numApperanceOfCard;
 			}
@@ -148,7 +146,7 @@ public class GameSetupTests {
 			}
 		}
 		//Iterates through the humans cards
-		for(Card c: human.getMyCards()){
+		for(Card c: board.getHumanPlayer().getMyCards()){
 			if(c.getName().equals(name)){
 				++numApperanceOfCard;
 			}
@@ -167,7 +165,7 @@ public class GameSetupTests {
 			}
 		}
 		//Iterates through the humans cards
-		for(Card c: human.getMyCards()){
+		for(Card c: board.getHumanPlayer().getMyCards()){
 			if(c.getName().equals(name)){
 				++numApperanceOfCard;
 			}

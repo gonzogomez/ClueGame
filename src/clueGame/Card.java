@@ -14,15 +14,18 @@ public class Card {
 		}
 		return false;
 	}
-	
+		
+	public Card() {
+		super();
+	}
+
 	public Card(String name, CardType cardType) {
 		super();
 		this.name = name;
 		this.cardType = cardType;
 	}
 
-
-
+	//Getters and setters
 	public String getName() {
 		return name;
 	}

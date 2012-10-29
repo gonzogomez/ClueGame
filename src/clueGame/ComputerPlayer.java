@@ -16,8 +16,8 @@ public class ComputerPlayer extends Player {
 		
 	}
 	
-	public void createSuggestion(){
-		
+	public Suggestion createSuggestion(){
+		return null;
 	}
 	
 	public void updateSeen(Card seen){

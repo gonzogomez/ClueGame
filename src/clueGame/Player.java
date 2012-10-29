@@ -1,10 +1,11 @@
 package clueGame;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 public class Player {
 	private String name;
-	private String color;
+	private Color color;
 	private int locationX;
 	private int locationY;
 	
@@ -33,11 +34,11 @@ public class Player {
 		this.name = name;
 	}
 
-	public String getColor() {
+	public Color getColor() {
 		return color;
 	}
 
-	public void setColor(String color) {
+	public void setColor(Color color) {
 		this.color = color;
 	}
 

@@ -73,7 +73,7 @@ public class GameActionsTests {
 		//Run the test 100 times
 		for(int i=0; i<100; i++){
 			player.pickLocation(board.getTargets());
-			BoardCell selected = board.getCells().get(board.calcIndex(player.getLocationX(), player.getLocationY()));
+			BoardCell selected = board.getCells().get(player.getLocation());
 			if(selected == board.getCells().get(board.calcIndex(13, 4))){
 				loc_Room++;
 			}
@@ -82,12 +82,12 @@ public class GameActionsTests {
 		assertEquals(100, loc_Room);
 	
 		//Test2
-		board.calcTargets(board.calcIndex(5, 15), 3);
+		board.calcTargets(board.calcIndex(6, 15), 3);
 		loc_Room = 0;
 		//Run the test 100 times
 		for(int i=0; i<100; i++){
 			player.pickLocation(board.getTargets());
-			BoardCell selected = board.getCells().get(board.calcIndex(player.getLocationX(), player.getLocationY()));
+			BoardCell selected = board.getCells().get(player.getLocation());
 			if(selected == board.getCells().get(board.calcIndex(5, 15))){
 				loc_Room++;
 			}
@@ -101,7 +101,7 @@ public class GameActionsTests {
 		//Run the test 100 times
 		for(int i=0; i<100; i++){
 			player.pickLocation(board.getTargets());
-			BoardCell selected = board.getCells().get(board.calcIndex(player.getLocationX(), player.getLocationY()));
+			BoardCell selected = board.getCells().get(player.getLocation());
 			if(selected == board.getCells().get(board.calcIndex(10, 17))){
 				loc_Room++;
 			}
@@ -122,7 +122,7 @@ public class GameActionsTests {
 		// Run the test 100 times
 		for (int i=0; i<100; i++) {
 			player.pickLocation(board.getTargets());
-			BoardCell selected = board.getCells().get(board.calcIndex(player.getLocationX(), player.getLocationY()));
+			BoardCell selected = board.getCells().get(player.getLocation());
 			if (selected == board.getCells().get(board.calcIndex(12, 0))){
 				loc_12_0Tot++;
 			}
@@ -153,7 +153,7 @@ public class GameActionsTests {
 		// Run the test 100 times
 		for (int i=0; i<100; i++) {
 			player.pickLocation(board.getTargets());
-			BoardCell selected = board.getCells().get(board.calcIndex(player.getLocationX(), player.getLocationY()));
+			BoardCell selected = board.getCells().get(player.getLocation());
 			if (selected == board.getCells().get(board.calcIndex(8, 0))){
 				loc_8_0Tot++;
 			}
@@ -176,11 +176,11 @@ public class GameActionsTests {
 		// Ensure we have 100 total selections (fail should also ensure)
 		assertEquals(100, loc_8_0Tot + loc_5_3Tot + loc_6_0Tot + loc_6_2Tot + loc_5_1Tot);
 		// Ensure each target was selected more than once
-		assertTrue(loc_8_0Tot > 10);
-		assertTrue(loc_5_3Tot > 10);
-		assertTrue(loc_6_0Tot > 10);
-		assertTrue(loc_6_2Tot > 10);
-		assertTrue(loc_5_1Tot > 10);
+		assertTrue(loc_8_0Tot > 5);
+		assertTrue(loc_5_3Tot > 5);
+		assertTrue(loc_6_0Tot > 5);
+		assertTrue(loc_6_2Tot > 5);
+		assertTrue(loc_5_1Tot > 5);
 	}
 	
 	//Test a random choice is made when the room is the last visited
@@ -201,7 +201,7 @@ public class GameActionsTests {
 			//Set the last room visited to C
 			player.setLastRoomVisited('C');
 			player.pickLocation(board.getTargets());
-			BoardCell selected = board.getCells().get(board.calcIndex(player.getLocationX(), player.getLocationY()));
+			BoardCell selected = board.getCells().get(player.getLocation());
 			if (selected == board.getCells().get(board.calcIndex(4, 3))){
 				loc_4_3Tot++;
 			}
@@ -227,12 +227,12 @@ public class GameActionsTests {
 		// Ensure we have 100 total selections (fail should also ensure)
 		assertEquals(100, loc_4_3Tot + loc_4_6Tot + loc_3_5Tot + loc_6_4Tot + loc_5_3Tot + loc_5_5Tot);
 		// Ensure each target was selected more than once
-		assertTrue(loc_4_3Tot > 10);
-		assertTrue(loc_4_6Tot > 10);
-		assertTrue(loc_3_5Tot > 10);
-		assertTrue(loc_6_4Tot > 10);
-		assertTrue(loc_5_3Tot > 10);
-		assertTrue(loc_5_5Tot > 10);
+		assertTrue(loc_4_3Tot > 5);
+		assertTrue(loc_4_6Tot > 5);
+		assertTrue(loc_3_5Tot > 5);
+		assertTrue(loc_6_4Tot > 5);
+		assertTrue(loc_5_3Tot > 5);
+		assertTrue(loc_5_5Tot > 5);
 		
 		//Test2
 		// Pick a location with last visited room in target, six targets
@@ -248,7 +248,7 @@ public class GameActionsTests {
 			//Set the last room visited to C
 			player.setLastRoomVisited('R');
 			player.pickLocation(board.getTargets());
-			BoardCell selected = board.getCells().get(board.calcIndex(player.getLocationX(), player.getLocationY()));
+			BoardCell selected = board.getCells().get(player.getLocation());
 			if (selected == board.getCells().get(board.calcIndex(5, 6))){
 				loc_5_6Tot++;
 			}
@@ -274,12 +274,12 @@ public class GameActionsTests {
 		// Ensure we have 100 total selections (fail should also ensure)
 		assertEquals(100, loc_5_6Tot + loc_6_7Tot + loc_4_8Tot + loc_7_8Tot + loc_6_9Tot + loc_5_10Tot);
 		// Ensure each target was selected more than once
-		assertTrue(loc_5_6Tot > 10);
-		assertTrue(loc_6_7Tot > 10);
-		assertTrue(loc_4_8Tot > 10);
-		assertTrue(loc_7_8Tot > 10);
-		assertTrue(loc_6_9Tot > 10);
-		assertTrue(loc_5_10Tot > 10);
+		assertTrue(loc_5_6Tot > 5);
+		assertTrue(loc_6_7Tot > 5);
+		assertTrue(loc_4_8Tot > 5);
+		assertTrue(loc_7_8Tot > 5);
+		assertTrue(loc_6_9Tot > 5);
+		assertTrue(loc_5_10Tot > 5);
 	}
 	
 	//Test disproving a suggestion
@@ -324,7 +324,7 @@ public class GameActionsTests {
 		
 		//Test that it returns null
 		returnCard = player.disproveSuggestion("Mrs. White", "Study", "Revolver");
-		assertEquals(null, returnCard.getName());
+		assertEquals(null, returnCard);
 	}
 	
 	//Test disproving suggestion with one player and multiple cards in possible match
@@ -454,13 +454,13 @@ public class GameActionsTests {
 		player2.getMyCards().add(leadPipeCard);
 		computers.add(player2);
 		ComputerPlayer player3 = new ComputerPlayer();
-		player1.getMyCards().add(mrGreenCard);
+		player3.getMyCards().add(mrGreenCard);
 		computers.add(player3);
 		ComputerPlayer player4 = new ComputerPlayer();
-		player1.getMyCards().add(knifeCard);
+		player4.getMyCards().add(knifeCard);
 		computers.add(player4);
 		ComputerPlayer player5 = new ComputerPlayer();
-		player1.getMyCards().add(hallCard);
+		player5.getMyCards().add(hallCard);
 		computers.add(player5);
 		
 		board.setComputerPlayers(computers);
@@ -469,7 +469,7 @@ public class GameActionsTests {
 		//Make suggestion that no players can disprove
 		returnCard = board.handleSuggestion("Mrs. White", "Rope", "Study");
 		//Assert that it returns null
-		assertEquals(null, returnCard.getName());
+		assertEquals(null, returnCard);
 		
 		//Tests when a suggestion is made that only the human can disprove
 		returnCard = board.handleSuggestion("Mrs. White", "Rope", "Kitchen");
@@ -482,7 +482,7 @@ public class GameActionsTests {
 		//Make suggestion that only player1 can disprove
 		returnCard = board.handleSuggestion("Colonel Mustard", "Rope", "Study");
 		//Assert that it returns null
-		assertEquals(null, returnCard.getName());
+		assertEquals(null, returnCard);
 		
 		//Test if it is the human player's turn, it will not return a card
 		//Set turn to human player
@@ -490,7 +490,9 @@ public class GameActionsTests {
 		//Make suggestion that only hplayer can disprove
 		returnCard = board.handleSuggestion("Mrs. White", "Rope", "Kitchen");
 		//Assert that it returns null
-		assertEquals(null, returnCard.getName());
+		assertEquals(null, returnCard);
+		//Reset whose turn it is
+		board.setWhoseTurn(null);
 		
 		//Test players are not queried in the same order each time
 		//Suggestion that two computers players can disprove
@@ -548,14 +550,15 @@ public class GameActionsTests {
 		//Update location
 		player.setLocationX(17);
 		player.setLocationY(5);
+		player.setLocation(board.calcIndex(17, 5));
 		//Make suggestion
-		testSuggestion = player.createSuggestion();
+		testSuggestion = player.createSuggestion(board.getCards(), board.getCells());
 		//Test suggested room is correct
 		assertEquals("Kitchen", testSuggestion.getRoom());
 		//Test suggested person is not included in seen cards
-		Assert.assertFalse(testSuggestion.getName().equals("Mr. Green"));
+		Assert.assertFalse(testSuggestion.getPerson().equals("Mr. Green"));
 		//Test suggested weapon is not included in seen cards
-		Assert.assertFalse(testSuggestion.getName().equals("Lead Pipe"));
+		Assert.assertFalse(testSuggestion.getWeapon().equals("Lead Pipe"));
 		
 		//Update seen cards
 		player.getSeenCards().add(mustardCard);
@@ -563,14 +566,15 @@ public class GameActionsTests {
 		//Update location
 		player.setLocationX(5);
 		player.setLocationY(15);
+		player.setLocation(board.calcIndex(5, 15));
 		//Make suggestion
-		testSuggestion = player.createSuggestion();
+		testSuggestion = player.createSuggestion(board.getCards(), board.getCells());
 		//Test suggested room is correct
 		assertEquals("Library", testSuggestion.getRoom());
 		//Test suggested person is not included in seen cards
-		Assert.assertFalse(testSuggestion.getName().equals("Colonel Mustard"));
+		Assert.assertFalse(testSuggestion.getPerson().equals("Colonel Mustard"));
 		//Test suggested weapon is not included in seen cards
-		Assert.assertFalse(testSuggestion.getName().equals("Knife"));
+		Assert.assertFalse(testSuggestion.getWeapon().equals("Knife"));
 
 	}
 

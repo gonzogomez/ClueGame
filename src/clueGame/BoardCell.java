@@ -5,6 +5,7 @@ import clueGame.RoomCell.DoorDirection;
 public abstract class BoardCell {
 	private int row;
 	private int column;
+	private int location;
 	
 	public boolean isWalkway() {
 		return false;
@@ -30,6 +31,14 @@ public abstract class BoardCell {
 	
 	public int getRow() {
 		return row;
+	}
+
+	public int getLocation() {
+		return location;
+	}
+
+	public void setLocation(int location) {
+		this.location = location;
 	}
 
 	public void setRow(int row) {

@@ -1,7 +1,7 @@
 package clueGame;
 
 public class Suggestion {
-	private String name;
+	private String person;
 	private String weapon;
 	private String room;
 	
@@ -10,18 +10,18 @@ public class Suggestion {
 	public Suggestion() {
 		super();
 	}
-	public Suggestion(String name, String weapon, String room) {
+	public Suggestion(String person, String weapon, String room) {
 		super();
-		this.name = name;
+		this.person = person;
 		this.weapon = weapon;
 		this.room = room;
 	}
 	//Getters and setters
-	public String getName() {
-		return name;
+	public String getPerson() {
+		return person;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setPerson(String person) {
+		this.person = person;
 	}
 	public String getWeapon() {
 		return weapon;

@@ -84,7 +84,7 @@ public class GameSetupTests {
 		//Test that the deck contains a certain person
 		Card person = new Card("Mr. Green",Card.CardType.PERSON);
 		Assert.assertTrue(deck.contains(person));
-		//Test that the deck contains a certain person
+		//Test that the deck contains a certain weapon
 		Card weapon = new Card("Lead Pipe",Card.CardType.WEAPON);
 		Assert.assertTrue(deck.contains(weapon));
 	}

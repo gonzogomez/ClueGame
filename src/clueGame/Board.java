@@ -298,6 +298,7 @@ public class Board {
 				path.addLast(i);
 				if(path.size() == numberOfSteps || cells.get(i).isDoorway()) {					
 					BoardCell b = cells.get(i);
+					b.setLocation(i);
 					targets.add(b);
 				} else {
 					LinkedList<Integer> recursiveList = new LinkedList<Integer>(); 
@@ -311,7 +312,7 @@ public class Board {
 	}
 	
 	
-	//Gets the list of targets in the form of a TreeSet
+	//Gets the list of targets in the form of a HashSet
 	public Set<BoardCell> getTargets() {
 		return targets;
 	}
@@ -372,11 +373,38 @@ public class Board {
 	}
 
 	public boolean checkAccusation(String person, String room, String weapon){
-		return false;
+		if(person.equals(solution.getPerson()) && room.equals(solution.getRoom()) && weapon.equals(solution.getWeapon())){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 
 	public Card handleSuggestion(String person, String weapon, String room){
-		return null;
+		ArrayList<Player> players = new ArrayList<Player>();
+		Card card = new Card();
+		card = null;
+		Random rand = new Random();
+		for(Player p: computerPlayers){
+			players.add(p);
+		}
+		players.add(humanPlayer);
+		int ranNumber = rand.nextInt(players.size());
+		for(int i = 0; i < players.size()-1; ++i){
+			if(card != null){
+				break;
+			}
+			if(ranNumber + i < 6 && whoseTurn != players.get(ranNumber + i)){
+				card = players.get(ranNumber + i).disproveSuggestion(person, room, weapon);
+			}
+			else{
+				if(whoseTurn != players.get(Math.abs(ranNumber -i))){
+					card = players.get(Math.abs(ranNumber - i)).disproveSuggestion(person, room, weapon);
+				}	
+			}
+		}
+		return card;
 	}
 //*Getters and Setters***********************************************************
 	

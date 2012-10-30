@@ -280,5 +280,4 @@ public class BoardAdjTargetTests {
 		Assert.assertTrue(targets.contains(board.getRoomCellAt(board.calcIndex(5, 19))));
 		Assert.assertTrue(targets.contains(board.getRoomCellAt(board.calcIndex(4, 18))));
 	}
-
 }

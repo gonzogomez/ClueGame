@@ -545,8 +545,8 @@ public class GameActionsTests {
 		Suggestion testSuggestion = new Suggestion();
 		
 		//Update seen cards
-		player.getSeenCards().add(mrGreenCard);
-		player.getSeenCards().add(leadPipeCard);
+		player.updateSeen(mrGreenCard);
+		player.updateSeen(leadPipeCard);
 		//Update location
 		player.setLocationX(17);
 		player.setLocationY(5);
@@ -561,8 +561,8 @@ public class GameActionsTests {
 		Assert.assertFalse(testSuggestion.getWeapon().equals("Lead Pipe"));
 		
 		//Update seen cards
-		player.getSeenCards().add(mustardCard);
-		player.getSeenCards().add(knifeCard);
+		player.updateSeen(mustardCard);
+		player.updateSeen(knifeCard);
 		//Update location
 		player.setLocationX(5);
 		player.setLocationY(15);

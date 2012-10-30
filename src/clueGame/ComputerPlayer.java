@@ -62,7 +62,7 @@ public class ComputerPlayer extends Player {
 	}
 	
 	public void updateSeen(Card seen){
-		
+		seenCards.add(seen);
 	}
 	//Converts room initial to full name
 	public String convertInitial(char initial){

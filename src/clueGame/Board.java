@@ -1,6 +1,7 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.Field;
@@ -14,9 +15,11 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.swing.JPanel;
+
 import clueGame.RoomCell.DoorDirection;
 
-public class Board {
+public class Board extends JPanel {
 	
 	//Variables
 	private ArrayList<BoardCell> cells;
@@ -405,6 +408,13 @@ public class Board {
 			}
 		}
 		return card;
+	}
+
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		for(BoardCell c: cells){
+			c.draw(g);
+		}
 	}
 //*Getters and Setters***********************************************************
 	

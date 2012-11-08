@@ -1,5 +1,7 @@
 package clueGame;
 
+import java.awt.Graphics;
+
 import clueGame.RoomCell.DoorDirection;
 
 public abstract class BoardCell {
@@ -17,8 +19,9 @@ public abstract class BoardCell {
 
 	public boolean isDoorway( ) { //10/21
 		return false;
-}
+	}
 	
+	public abstract void draw(Graphics g);
 //	//Our Code commented out 10/21
 //	public boolean isDoorway(RoomCell room) {
 //		if(room.getDoorDirection() == null) {
